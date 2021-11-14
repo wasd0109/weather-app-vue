@@ -11,12 +11,17 @@
       </div>
     </v-app-bar>
     <v-main v-if="!loadingLocation">
+      <v-card v-if="showGPSWarning" color="white" class="d-flex">
+        <v-icon class="ml-4">mdi-alert</v-icon>
+        <v-card-subtitle>Enable GPS for more accurate weather</v-card-subtitle>
+      </v-card>
       <HomePage :latitude="latitude" :longitude="longitude" />
     </v-main>
   </v-app>
 </template>
 
 <script>
+import axios from 'axios';
 import HomePage from './pages/HomePage.vue';
 
 export default {
@@ -45,10 +50,20 @@ export default {
           this.longitude = coords.longitude;
           this.loadingLocation = false;
         },
-        () => {
-          this.latitude = 37.3229978;
-          this.longitude = -122.0321823;
+        async () => {
+          try {
+            const res = await axios.get(
+              `https://ipgeolocation.abstractapi.com/v1/?api_key=${process.env.VUE_APP_ABSTRACT_API_KEY}`
+            );
+            console.log(res.data);
+            this.latitude = res.data.latitude;
+            this.longitude = res.data.longitude;
+          } catch (err) {
+            this.latitude = 37.3229978;
+            this.longitude = -122.0321823;
+          }
           this.loadingLocation = false;
+          this.showGPSWarning = true;
         }
       );
     },
