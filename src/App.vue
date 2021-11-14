@@ -1,60 +1,59 @@
 <template>
   <v-app>
-    <v-app-bar
-      app
-      color="primary"
-      dark
-    >
-      <div class="d-flex align-center">
-        <v-img
-          alt="Vuetify Logo"
-          class="shrink mr-2"
-          contain
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-logo-dark.png"
-          transition="scale-transition"
-          width="40"
-        />
-
-        <v-img
-          alt="Vuetify Name"
-          class="shrink mt-1 hidden-sm-and-down"
-          contain
-          min-width="100"
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-name-dark.png"
-          width="100"
-        />
+    <v-navigation-drawer v-model="showDrawer" absolue app></v-navigation-drawer>
+    <v-app-bar dark flat app color="primary">
+      <v-app-bar-nav-icon @click="toggleDrawer"></v-app-bar-nav-icon>
+      <v-app-bar-title>Weather</v-app-bar-title>
+      <div class="ml-auto">
+        <v-btn icon @click="getCurrentLocation">
+          <v-icon>mdi-crosshairs-gps</v-icon>
+        </v-btn>
       </div>
-
-      <v-spacer></v-spacer>
-
-      <v-btn
-        href="https://github.com/vuetifyjs/vuetify/releases/latest"
-        target="_blank"
-        text
-      >
-        <span class="mr-2">Latest Release</span>
-        <v-icon>mdi-open-in-new</v-icon>
-      </v-btn>
     </v-app-bar>
-
-    <v-main>
-      <HelloWorld/>
+    <v-main v-if="!loadingLocation">
+      <HomePage :latitude="latitude" :longitude="longitude" />
     </v-main>
   </v-app>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld';
+import HomePage from './pages/HomePage.vue';
 
 export default {
   name: 'App',
 
   components: {
-    HelloWorld,
+    HomePage,
   },
 
   data: () => ({
-    //
+    showDrawer: false,
+    latitude: null,
+    longitude: null,
+    loadingLocation: true,
   }),
+  methods: {
+    toggleDrawer() {
+      this.showDrawer = !this.showDrawer;
+    },
+    async getCurrentLocation() {
+      this.loadingLocation = true;
+      navigator.geolocation.getCurrentPosition(
+        ({ coords }) => {
+          this.latitude = coords.latitude;
+          this.longitude = coords.longitude;
+          this.loadingLocation = false;
+        },
+        () => {
+          this.latitude = 37.3229978;
+          this.longitude = -122.0321823;
+          this.loadingLocation = false;
+        }
+      );
+    },
+  },
+  mounted() {
+    this.getCurrentLocation();
+  },
 };
 </script>
