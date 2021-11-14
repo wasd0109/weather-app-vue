@@ -1,7 +1,7 @@
 <template>
   <v-overlay
     :value="showSearchOverlay"
-    @click="closeOverlay"
+    @click="$emit('close-overlay')"
     class="d-flex align-start"
   >
     <div class="search-content">
@@ -10,7 +10,7 @@
         @confirm-search="getSearchLocation"
         :search-error="searchError"
       />
-      <v-list v-if="autocompletePredictions.length" light>
+      <v-list v-if="autocompletePredictions.length" rounded light>
         <v-list-item
           v-for="item in autocompletePredictions"
           :key="item.place_id"
@@ -31,11 +31,8 @@ import axios from 'axios';
 export default {
   components: { SearchBar },
   props: ['showSearchOverlay'],
-  emit: ['close-overlay', 'submit-search'],
+  emits: ['close-overlay', 'submit-search'],
   methods: {
-    closeOverlay() {
-      this.$emit('close-overlay');
-    },
     async getAutocomplete(searchBarText) {
       this.searchError = { isError: false, message: '' };
       const res = await axios.get(
@@ -65,6 +62,7 @@ export default {
         longitude: bestResult.geometry.location.lng,
       };
       this.$emit('submit-search', searchedLocation);
+      this.autocompletePredictions = [];
       this.closeOverlay();
     },
     setSelectedLocation(prediction) {

@@ -64,35 +64,34 @@ export default {
     },
     async getCurrentLocation() {
       this.loadingLocation = true;
-      navigator.geolocation.getCurrentPosition(
-        ({ coords }) => {
+      const successCallback = ({ coords }) => {
+        this.location = {
+          latitude: coords.latitude,
+          longitude: coords.longitude,
+        };
+        this.loadingLocation = false;
+      };
+      const errorCallback = async () => {
+        try {
+          // IP address geocoding
+          const res = await axios.get(
+            `https://ipgeolocation.abstractapi.com/v1/?api_key=${process.env.VUE_APP_ABSTRACT_API_KEY}`
+          );
           this.location = {
-            latitude: coords.latitude,
-            longitude: coords.longitude,
+            latitude: res.data.latitude,
+            longitude: res.data.longitude,
           };
-          this.loadingLocation = false;
-        },
-        async () => {
-          try {
-            const res = await axios.get(
-              `https://ipgeolocation.abstractapi.com/v1/?api_key=${process.env.VUE_APP_ABSTRACT_API_KEY}`
-            );
-            console.log(res.data);
-            this.location = {
-              latitude: res.data.latitude,
-              longitude: res.data.longitude,
-            };
-          } catch (err) {
-            // Fallback to Cupertino
-            this.location = {
-              latitude: 37.3229978,
-              longitude: -122.0321823,
-            };
-          }
-          this.loadingLocation = false;
-          this.showGPSWarning = true;
+        } catch (err) {
+          // Fallback to Cupertino
+          this.location = {
+            latitude: 37.3229978,
+            longitude: -122.0321823,
+          };
         }
-      );
+        this.loadingLocation = false;
+        this.showGPSWarning = true;
+      };
+      navigator.geolocation.getCurrentPosition(successCallback, errorCallback);
     },
     setLocation(location) {
       this.location = location;

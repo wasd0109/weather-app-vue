@@ -12,6 +12,7 @@
       label="Search City"
       prepend-inner-icon="mdi-magnify"
       @input="getAutocomplete"
+      placeholder="Enter location"
     ></v-text-field>
   </v-form>
 </template>
@@ -21,7 +22,7 @@ export default {
   data() {
     return { searchBarText: '' };
   },
-  emit: ['input-change', 'confirm-submit'],
+  emits: ['input-change', 'confirm-submit'],
   methods: {
     submitSearch() {
       this.$emit('confirm-search', this.searchBarText);
