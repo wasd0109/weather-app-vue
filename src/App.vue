@@ -15,14 +15,24 @@
         <v-btn icon @click="getCurrentLocation">
           <v-icon>mdi-crosshairs-gps</v-icon>
         </v-btn>
+        <v-btn icon @click="toggleSearchOverlay">
+          <v-icon>mdi-magnify</v-icon>
+        </v-btn>
       </div>
     </v-app-bar>
     <v-main v-if="!loadingLocation">
+      <div>
+        <SearchBarOverlay
+          :showSearchOverlay="showSearchOverlay"
+          @close-overlay="closeSearchOverlay"
+          @submit-search="setLocation"
+        />
+      </div>
       <v-card v-if="showGPSWarning" color="white" class="d-flex">
         <v-icon class="ml-4">mdi-alert</v-icon>
         <v-card-subtitle>{{ $t('gps-warning') }}</v-card-subtitle>
       </v-card>
-      <HomePage :latitude="latitude" :longitude="longitude" />
+      <HomePage :location="location" />
     </v-main>
   </v-app>
 </template>
@@ -31,6 +41,7 @@
 import axios from 'axios';
 import HomePage from './pages/HomePage.vue';
 import LangChanger from './components/LangChanger.vue';
+import SearchBarOverlay from './pages/SearchBarOverlay.vue';
 
 export default {
   name: 'App',
@@ -38,25 +49,34 @@ export default {
   components: {
     HomePage,
     LangChanger,
+    SearchBarOverlay,
   },
 
   data: () => ({
     showDrawer: false,
-    latitude: null,
-    longitude: null,
+    location: {},
     loadingLocation: true,
     showGPSWarning: false,
+    showSearchOverlay: false,
   }),
   methods: {
     toggleDrawer() {
       this.showDrawer = !this.showDrawer;
     },
+    toggleSearchOverlay() {
+      this.showSearchOverlay = !this.showSearchOverlay;
+    },
+    closeSearchOverlay() {
+      this.showSearchOverlay = false;
+    },
     async getCurrentLocation() {
       this.loadingLocation = true;
       navigator.geolocation.getCurrentPosition(
         ({ coords }) => {
-          this.latitude = coords.latitude;
-          this.longitude = coords.longitude;
+          this.location = {
+            latitude: coords.latitude,
+            longitude: coords.longitude,
+          };
           this.loadingLocation = false;
         },
         async () => {
@@ -65,18 +85,27 @@ export default {
               `https://ipgeolocation.abstractapi.com/v1/?api_key=${process.env.VUE_APP_ABSTRACT_API_KEY}`
             );
             console.log(res.data);
-            this.latitude = res.data.latitude;
-            this.longitude = res.data.longitude;
+            this.location = {
+              latitude: res.data.latitude,
+              longitude: res.data.longitude,
+            };
           } catch (err) {
-            this.latitude = 37.3229978;
-            this.longitude = -122.0321823;
+            // Fallback to Cupertino
+            this.location = {
+              latitude: 37.3229978,
+              longitude: -122.0321823,
+            };
           }
           this.loadingLocation = false;
           this.showGPSWarning = true;
         }
       );
     },
+    setLocation(location) {
+      this.location = location;
+    },
   },
+
   mounted() {
     this.getCurrentLocation();
   },
@@ -86,5 +115,8 @@ export default {
 <style>
 .app-bar-title div {
   min-width: 10vw;
+}
+.search-content {
+  width: 80vw;
 }
 </style>

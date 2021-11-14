@@ -18,13 +18,13 @@ import { weatherCodeToEmoji } from '../utils/helpers';
 export default {
   components: { CurrentWeather, DailyForecast, RainMap },
   methods: {
-    async getCurrentWeather() {
+    async getCurrentWeather(location) {
       this.currentLoading = true;
       const currentLocale = this.$i18n.locale;
       console.log(currentLocale);
       try {
         const res = await api.get(
-          `/weather?units=metric&lat=${this.latitude}&lon=${this.longitude}&lang=${currentLocale}&appid=${process.env.VUE_APP_OPENWEATHER_API_KEY}`
+          `/weather?units=metric&lat=${location.latitude}&lon=${location.longitude}&lang=${currentLocale}&appid=${process.env.VUE_APP_OPENWEATHER_API_KEY}`
         );
         if (res.status === 200) {
           const weatherData = res.data;
@@ -43,11 +43,11 @@ export default {
       }
       this.currentLoading = false;
     },
-    async getWeatherForecast() {
+    async getWeatherForecast(location) {
       this.forecastLoading = true;
       const currentLocale = this.$i18n.locale;
       const res = await api.get(
-        `/onecall?exclude=current&units=metric&lat=${this.latitude}&lon=${this.longitude}&lang=${currentLocale}&appid=${process.env.VUE_APP_OPENWEATHER_API_KEY}`
+        `/onecall?exclude=current&units=metric&lat=${location.latitude}&lon=${location.longitude}&lang=${currentLocale}&appid=${process.env.VUE_APP_OPENWEATHER_API_KEY}`
       );
       if (res.status === 200) {
         const dailyWeatherData = res.data.daily;
@@ -55,13 +55,13 @@ export default {
       }
       this.forecastLoading = false;
     },
-    async getWeather() {
-      await this.getCurrentWeather();
-      await this.getWeatherForecast();
+    async getWeather(location) {
+      await this.getCurrentWeather(location);
+      await this.getWeatherForecast(location);
     },
   },
   mounted() {
-    this.getWeather();
+    this.getWeather(this.location);
   },
   data() {
     return {
@@ -76,7 +76,17 @@ export default {
       forecastLoading: true,
     };
   },
-  props: ['latitude', 'longitude'],
+  props: ['location'],
+  watch: {
+    deep: true,
+    immediate: true,
+    location: function (newLocation, oldLocation) {
+      console.log('Test');
+      if (newLocation !== oldLocation) {
+        this.getWeather(newLocation);
+      }
+    },
+  },
 };
 </script>
 
