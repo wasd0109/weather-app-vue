@@ -31,6 +31,7 @@ export default {
     latitude: null,
     longitude: null,
     loadingLocation: true,
+    showGPSWarning: false,
   }),
   methods: {
     toggleDrawer() {

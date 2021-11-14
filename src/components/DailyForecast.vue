@@ -10,13 +10,13 @@
       "
       elevation="4"
     >
-      <v-progress-circular
-        indeterminate
-        color="primary"
-        :size="50"
-        class="spinner"
-        v-if="isLoading"
-      ></v-progress-circular>
+      <div v-if="isLoading" class="spinner">
+        <v-progress-circular
+          indeterminate
+          color="primary"
+          :size="50"
+        ></v-progress-circular>
+      </div>
       <BaseForecastCard
         v-for="forecast in dailyWeather"
         class="card"
@@ -38,8 +38,10 @@ export default {
 
 <style>
 .spinner {
-  justify-self: center;
-  align-self: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
 }
 .forecast-list {
   min-height: 25vh;
