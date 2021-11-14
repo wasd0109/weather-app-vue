@@ -1,6 +1,8 @@
 <template>
   <v-form @submit.prevent="submitSearch">
     <v-text-field
+      :error-messages="searchError.message"
+      :error="searchError.isError"
       v-model="searchBarText"
       solo
       @click.stop
@@ -28,6 +30,7 @@ export default {
       this.$emit('input-change', this.searchBarText);
     },
   },
+  props: ['searchError'],
 };
 </script>
 

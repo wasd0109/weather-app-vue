@@ -8,6 +8,7 @@
       <SearchBar
         @input-change="getAutocomplete"
         @confirm-search="getSearchLocation"
+        :search-error="searchError"
       />
       <v-list v-if="autocompletePredictions.length" light>
         <v-list-item
@@ -26,6 +27,7 @@
 <script>
 import SearchBar from '../components/SearchBar.vue';
 import axios from 'axios';
+
 export default {
   components: { SearchBar },
   props: ['showSearchOverlay'],
@@ -35,12 +37,19 @@ export default {
       this.$emit('close-overlay');
     },
     async getAutocomplete(searchBarText) {
+      this.searchError = { isError: false, message: '' };
       const res = await axios.get(
         `https://morning-shelf-47429.herokuapp.com/https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${searchBarText}&types=(regions)&key=${process.env.VUE_APP_GOOGLE_MAP_API_KEY}`
       );
       this.autocompletePredictions = res.data.predictions;
     },
     async getSearchLocation() {
+      if (!this.autocompletePredictions.length) {
+        return (this.searchError = {
+          isError: true,
+          message: 'Please eneter a valid location',
+        });
+      }
       if (!this.selectedLocation) {
         this.selectedLocation = this.autocompletePredictions[0].place_id;
       }
@@ -66,6 +75,7 @@ export default {
     return {
       autocompletePredictions: [],
       selectedLocation: null,
+      searchError: { isError: false, message: '' },
     };
   },
   watch: {
