@@ -22,10 +22,11 @@ export default {
       this.currentLoading = true;
       try {
         const res = await api.get(
-          `/weather?units=metric&lat=${this.latitude}&lon=${this.longitude}&appid=${process.env.VUE_APP_OPENWEATHER_API_KEY}`
+          `/weather?units=metric&lat=${this.latitude}&lon=${this.longitude}&lang=ja&appid=${process.env.VUE_APP_OPENWEATHER_API_KEY}`
         );
         if (res.status === 200) {
           const weatherData = res.data;
+          console.log(res.data);
           let currentWeather = {};
           currentWeather.cityname = weatherData.name;
           currentWeather.date = new Date(weatherData.dt * 1000).toDateString();
@@ -47,7 +48,6 @@ export default {
       );
       if (res.status === 200) {
         const dailyWeatherData = res.data.daily;
-        console.log(res.data.daily);
         this.dailyWeather = dailyWeatherData;
       }
       this.forecastLoading = false;

@@ -3,7 +3,7 @@
     <v-navigation-drawer v-model="showDrawer" absolue app></v-navigation-drawer>
     <v-app-bar dark flat app color="primary">
       <v-app-bar-nav-icon @click="toggleDrawer"></v-app-bar-nav-icon>
-      <v-app-bar-title>Weather</v-app-bar-title>
+      <v-app-bar-title>{{ $t('app-title') }}</v-app-bar-title>
       <div class="ml-auto">
         <v-btn icon @click="getCurrentLocation">
           <v-icon>mdi-crosshairs-gps</v-icon>
