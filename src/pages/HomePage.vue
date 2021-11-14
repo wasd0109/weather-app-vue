@@ -1,24 +1,25 @@
 <template>
-  <div class="d-flex flex-column">
-    <v-progress-circular
-      indeterminate
-      color="primary"
-      :size="100"
-      class="spinner mt-16"
-      v-if="isLoading"
-    ></v-progress-circular>
-    <CurrentWeather v-else :currentWeather="currentWeather" />
+  <div>
+    <CurrentWeather
+      :isLoading="currentLoading"
+      :currentWeather="currentWeather"
+    />
+    <DailyForecast :isLoading="forecastLoading" :dailyWeather="dailyWeather" />
+    <RainMap />
   </div>
 </template>
 
 <script>
 import CurrentWeather from '../components/CurrentWeather.vue';
+import DailyForecast from '../components/DailyForecast.vue';
+import RainMap from '../components/RainMap.vue';
 import api from '../utils/api';
 import { weatherCodeToEmoji } from '../utils/helpers';
 export default {
-  components: { CurrentWeather },
+  components: { CurrentWeather, DailyForecast, RainMap },
   methods: {
     async getCurrentWeather() {
+      this.currentLoading = true;
       try {
         const res = await api.get(
           `/weather?units=metric&lat=${this.latitude}&lon=${this.longitude}&appid=${process.env.VUE_APP_OPENWEATHER_API_KEY}`
@@ -37,11 +38,27 @@ export default {
       } catch (err) {
         console.log(err);
       }
-      this.isLoading = false;
+      this.currentLoading = false;
+    },
+    async getWeatherForecast() {
+      this.forecastLoading = true;
+      const res = await api.get(
+        `/onecall?exclude=current&units=metric&lat=${this.latitude}&lon=${this.longitude}&appid=${process.env.VUE_APP_OPENWEATHER_API_KEY}`
+      );
+      if (res.status === 200) {
+        const dailyWeatherData = res.data.daily;
+        console.log(res.data.daily);
+        this.dailyWeather = dailyWeatherData;
+      }
+      this.forecastLoading = false;
+    },
+    async getWeather() {
+      await this.getCurrentWeather();
+      await this.getWeatherForecast();
     },
   },
   mounted() {
-    this.getCurrentWeather();
+    this.getWeather();
   },
   data() {
     return {
@@ -51,16 +68,13 @@ export default {
         weatherEmoji: '',
         temperture: '',
       },
-      isLoading: true,
+      dailyWeather: [],
+      currentLoading: true,
+      forecastLoading: true,
     };
   },
   props: ['latitude', 'longitude'],
 };
 </script>
 
-<style>
-.spinner {
-  justify-self: center;
-  align-self: center;
-}
-</style>
+<style></style>

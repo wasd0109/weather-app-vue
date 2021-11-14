@@ -3,10 +3,16 @@
     color="primary"
     dark
     elevation="0"
-    class="d-flex flex-column currentWeatherCard justify-center"
+    class="d-flex flex-column current-weather-card justify-center"
     tile
   >
-    <v-container>
+    <v-progress-circular
+      v-if="isLoading"
+      indeterminate
+      size="50"
+      class="align-self-center"
+    ></v-progress-circular>
+    <v-container v-else>
       <div>
         <h4 class="font-weight-medium text-h4" color="white">
           {{ currentWeather.cityname }}
@@ -25,12 +31,16 @@
 
 <script>
 export default {
-  props: ['currentWeather'],
+  props: ['currentWeather', 'isLoading'],
 };
 </script>
 
 <style>
-.currentWeatherCard {
+.current-weather-card {
   min-height: 30vh;
+}
+.spinner {
+  justify-self: center;
+  align-self: center;
 }
 </style>
