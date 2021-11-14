@@ -1,3 +1,21 @@
 {
-  "app-title": "Weather"
+  "app-title": "Weather",
+  "gps-warning": "Enable GPS for more accurate weather",
+  "sunday": "Sunday",
+  "monday": "Monday",
+  "tuesday": "Tuesday",
+  "wednesday": "Wednesday",
+  "thursday": "Thursday",
+  "friday": "Friday",
+  "saturday": "Saturday",
+  "sun": "Sun",
+  "mon": "Mon",
+  "tue": "Tue",
+  "wed": "Wed",
+  "thu": "Thu",
+  "fri": "Fri",
+  "sat": "Sat",
+  "language": "Langauge",
+  "en": "English",
+  "ja": "Japanese"
 }

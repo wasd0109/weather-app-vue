@@ -20,16 +20,18 @@ export default {
   methods: {
     async getCurrentWeather() {
       this.currentLoading = true;
+      const currentLocale = this.$i18n.locale;
+      console.log(currentLocale);
       try {
         const res = await api.get(
-          `/weather?units=metric&lat=${this.latitude}&lon=${this.longitude}&lang=ja&appid=${process.env.VUE_APP_OPENWEATHER_API_KEY}`
+          `/weather?units=metric&lat=${this.latitude}&lon=${this.longitude}&lang=${currentLocale}&appid=${process.env.VUE_APP_OPENWEATHER_API_KEY}`
         );
         if (res.status === 200) {
           const weatherData = res.data;
           console.log(res.data);
           let currentWeather = {};
           currentWeather.cityname = weatherData.name;
-          currentWeather.date = new Date(weatherData.dt * 1000).toDateString();
+          currentWeather.date = new Date(weatherData.dt * 1000);
           currentWeather.temperture = weatherData.main.temp.toFixed(1);
           currentWeather.weatherEmoji = weatherCodeToEmoji(
             weatherData.weather[0].icon
@@ -43,8 +45,9 @@ export default {
     },
     async getWeatherForecast() {
       this.forecastLoading = true;
+      const currentLocale = this.$i18n.locale;
       const res = await api.get(
-        `/onecall?exclude=current&units=metric&lat=${this.latitude}&lon=${this.longitude}&appid=${process.env.VUE_APP_OPENWEATHER_API_KEY}`
+        `/onecall?exclude=current&units=metric&lat=${this.latitude}&lon=${this.longitude}&lang=${currentLocale}&appid=${process.env.VUE_APP_OPENWEATHER_API_KEY}`
       );
       if (res.status === 200) {
         const dailyWeatherData = res.data.daily;

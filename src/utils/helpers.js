@@ -43,13 +43,14 @@ const timestampToDayOfWeek = (timestamp) => {
   const date = new Date(timestamp * 1000);
   const dayOfWeek = date.getDay();
   const weekday = new Array(7);
-  weekday[0] = 'Sunday';
-  weekday[1] = 'Monday';
-  weekday[2] = 'Tuesday';
-  weekday[3] = 'Wednesday';
-  weekday[4] = 'Thursday';
-  weekday[5] = 'Friday';
-  weekday[6] = 'Saturday';
+  weekday[0] = 'sunday';
+  weekday[1] = 'monday';
+  weekday[2] = 'tuesday';
+  weekday[3] = 'wednesday';
+  weekday[4] = 'thursday';
+  weekday[5] = 'friday';
+  weekday[6] = 'saturday';
+
   return weekday[dayOfWeek];
 };
 

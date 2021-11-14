@@ -1,9 +1,16 @@
 <template>
   <v-app>
-    <v-navigation-drawer v-model="showDrawer" absolue app></v-navigation-drawer>
+    <v-navigation-drawer v-model="showDrawer" absolue app>
+      <div class="d-flex justify-center align-center flex-column">
+        <h5 class="text-h6">{{ $t('language') }}</h5>
+        <LangChanger />
+      </div>
+    </v-navigation-drawer>
     <v-app-bar dark flat app color="primary">
       <v-app-bar-nav-icon @click="toggleDrawer"></v-app-bar-nav-icon>
-      <v-app-bar-title>{{ $t('app-title') }}</v-app-bar-title>
+      <v-app-bar-title class="app-bar-title">
+        {{ $t('app-title') }}
+      </v-app-bar-title>
       <div class="ml-auto">
         <v-btn icon @click="getCurrentLocation">
           <v-icon>mdi-crosshairs-gps</v-icon>
@@ -13,7 +20,7 @@
     <v-main v-if="!loadingLocation">
       <v-card v-if="showGPSWarning" color="white" class="d-flex">
         <v-icon class="ml-4">mdi-alert</v-icon>
-        <v-card-subtitle>Enable GPS for more accurate weather</v-card-subtitle>
+        <v-card-subtitle>{{ $t('gps-warning') }}</v-card-subtitle>
       </v-card>
       <HomePage :latitude="latitude" :longitude="longitude" />
     </v-main>
@@ -23,12 +30,14 @@
 <script>
 import axios from 'axios';
 import HomePage from './pages/HomePage.vue';
+import LangChanger from './components/LangChanger.vue';
 
 export default {
   name: 'App',
 
   components: {
     HomePage,
+    LangChanger,
   },
 
   data: () => ({
@@ -73,3 +82,9 @@ export default {
   },
 };
 </script>
+
+<style>
+.app-bar-title div {
+  min-width: 10vw;
+}
+</style>

@@ -18,7 +18,7 @@
           {{ currentWeather.cityname }}
         </h4>
         <h6 class="font-weight-light text-subtitle-1">
-          {{ currentWeather.date }}
+          {{ $d(currentWeather.date, 'short') }}
         </h6>
         <div class="d-flex justify-space-between mt-4">
           <p class="text-h2">{{ currentWeather.weatherEmoji }}</p>
@@ -32,6 +32,9 @@
 <script>
 export default {
   props: ['currentWeather', 'isLoading'],
+  // computed:{date(){
+  //   return
+  // }}
 };
 </script>
 

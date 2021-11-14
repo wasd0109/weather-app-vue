@@ -38,9 +38,11 @@ export default {
   props: ['forecast'],
   computed: {
     dayOfWeek() {
-      return timestampToDayOfWeek(this.forecast.dt)
-        .substring(0, 3)
-        .toUpperCase();
+      const convertedDay = timestampToDayOfWeek(this.forecast.dt).substring(
+        0,
+        3
+      );
+      return this.$t(convertedDay).toUpperCase();
     },
     weatherEmoji() {
       return weatherCodeToEmoji(this.forecast.weather[0].icon);
